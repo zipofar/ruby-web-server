@@ -1,42 +1,49 @@
 require 'uri'
 
-class Request
-  attr_reader :method, :path, :version, :headers, :body, :uri
+module ZipServer
+  class Request
+    attr_reader :method, :path, :version, :headers, :body, :uri
 
-  def initialize(request = "")
-    parse(request)
-  end
+    def initialize(request = '')
+      @raw_request = request
+    end
 
-  def parse(request)
-    @method, @path, @version = request.lines[0].split
-    @uri = URI(@path)
+    def parse
+      @method, @path, @version = @raw_request.lines[0].split
+      @uri = URI(@path)
 
-    @headers = {}
-    @body = {}
+      @headers = {}
+      @body = {}
 
-    mode = :headers
-    request.lines[1..-1].each do |line|
-      return mode = :body if line == "\r\n"
+      mode = :headers
+      @raw_request.lines[1..-1].each do |line|
+        return mode = :body if line == "\r\n"
 
-      if mode == :headers
-        header, value = line.split
-        add_header(header, value)
-      else
-        add_body(line)
+        if mode == :headers
+          header, value = line.split
+          add_header(header, value)
+        else
+          add_body(line)
+        end
       end
+
+      self
+    end
+
+    private
+
+    def add_body(line)
+      @body += line
+    end
+
+    def add_header(header, value)
+      header = normalize(header)
+      @headers[header] = value
+    end
+
+    def normalize(header)
+      header.gsub(":", "").downcase.to_sym
     end
   end
-
-  def add_body(line)
-    @body += line
-  end
-
-  def add_header(header, value)
-    header = normalize(header)
-    @headers[header] = value
-  end
-
-  def normalize(header)
-    header.gsub(":", "").downcase.to_sym
-  end
 end
+
