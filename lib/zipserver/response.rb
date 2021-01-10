@@ -1,5 +1,5 @@
-module ZipServer
-  SERVER_NAME = 'ZipServer'
+module Zipserver
+  SERVER_NAME = 'Zipserver'
 
   class Response
     def initialize(status, headers = {}, body = '')

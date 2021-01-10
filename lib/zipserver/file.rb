@@ -1,4 +1,4 @@
-module ZipServer
+module Zipserver
   module File
     DEFAULT_CONTENT_TYPE = 'application/octet-stream'
     CONTENT_TYPE_MAPPING = {

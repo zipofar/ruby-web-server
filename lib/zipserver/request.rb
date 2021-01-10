@@ -1,6 +1,6 @@
 require 'uri'
 
-module ZipServer
+module Zipserver
   class Request
     attr_reader :method, :path, :version, :headers, :body, :uri
 
